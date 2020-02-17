@@ -13,10 +13,16 @@ puts `clear`
 design_lines
 print "Welcome to the online grocery store"
 design_lines
+# puts
+# design_lines
+# print "What would you like to do today?"
+# design_lines
+puts 
+design_lines
+print "How much money do you have to spend today?!"
+design_lines
 puts
-design_lines
-print "What would you like to do today?"
-design_lines
+@user_wallet = gets.strip.to_i
 puts 
 menu
 end
@@ -35,7 +41,8 @@ def menu
   4) remove items from your cart
   5) determine cart total
   6) add new items to the store
-  7) exit
+  7) check out
+  8) exit
   "
   user_choice = gets.strip.to_i
   
@@ -53,6 +60,8 @@ def menu
   when 6
     add_items_to_store
   when 7 
+    check_out
+  when 8
     exit_store
   else 
     puts "Wrong choice, try again"
@@ -82,6 +91,7 @@ def view_cart
   #will display items in cart
   cart_items
   calc_cart_total
+  puts "Starting wallet balance is $#{@user_wallet.round(2)}."
   menu
 end 
 
@@ -164,7 +174,7 @@ def calc_cart_total
   @user_cart.each do |product|
     @cart_total = @cart_total + product[:price]
   end
-  puts "Your cart will cost you $#{@cart_total}.00 currently."
+  puts "Your cart will cost you $#{@cart_total.round(2)} currently."
 end
 
 def add_items_to_store
@@ -191,10 +201,79 @@ def add_items_to_store
   menu
 end
 
+def check_out
+  #will check if cust has enough money to check out. 
+  apply_coupon
+  taxes
+  puts `clear`
+  puts 
+  puts "scanning ..."
+  sleep 1
+  puts "scanning ..."
+  sleep 1
+  puts "scanning ..."
+  sleep 1
+  puts "scanning ..."
+  sleep 1
+  puts "scanning ..."
+  sleep 1
+  puts "scanning ..."
+  sleep 1
+  if @user_wallet >= @new_total 
+    puts `clear`
+    puts "Total after coupon code $#{@new_total.round(2)}"
+    puts "Taxes charged, $#{@taxes}."
+    puts "Total = $#{(@new_total + @taxes).round(2)}."
+    puts "Looks like you have a job to pay the bills!"
+    puts "Your wallet balance is $#{(@user_wallet - @cart_total).round(2)}."
+    sleep 12
+    exit_store
+  else 
+    puts "Your pockets are looking a little thin."
+    puts "You are going to have to remove some items."
+    puts "Your cart total is $#{@cart_total.round(2)}.00, and you only have $#{@user_wallet.round(2)}.00."
+    sleep 8
+    remove_from_cart
+  end
+end
+
+def apply_coupon
+#applies coupon to purchase
+puts "Please enter coupon code if you have one"
+@coupon_code = gets.strip
+coupon
+end
+
+def taxes
+  @taxes = (@new_total * 0.06).round(2)
+end
+
+def coupon
+  #does the math for coupon
+  case @coupon_code
+  when 'off10'
+    @new_total = @cart_total * 0.9
+    puts "coupon applied"
+    sleep 2
+  when 'off20'
+    @new_total = @cart_total * 0.8
+    puts "coupon applied"
+    sleep 2
+  when 'supersaver'
+    @new_total = @cart_total * 0.5
+    puts "coupon applied"
+    sleep 2
+  else
+    @new_total = @cart_total
+    puts "that is not a valid code, sucks to suck"
+    sleep 2
+  end
+end
+
 def exit_store
   puts `clear`
   design_lines
-  print "Thanks for visiting the grocery store today!"
+  print "Thanks for visiting today!"
   design_lines
   puts 
   design_lines
@@ -212,18 +291,19 @@ end
 
   #store inventory
   @store_inventory = [
-  { item: 'apple', price: 2 },
-  { item: 'orange', price: 2 },
-  { item: 'banana', price: 67 },
-  {item: 'twinkies', price: 545},
-  {item: 'snickers', price: 4},
-  {item: "chicken", price: 8},
-  {item: "eggs", price: 3},
-  {item: "ice cream", price: 35},
-  {item: "coffee", price: 23}
+  { item: 'apple', price: 2.99 },
+  { item: 'orange', price: 2.89 },
+  { item: 'banana', price: 1.79 },
+  {item: 'twinkies', price: 3.99},
+  {item: 'snickers', price: 4.50},
+  {item: "chicken", price: 8.99},
+  {item: "eggs", price: 2.69},
+  {item: "ice cream", price: 12.99},
+  {item: "coffee", price: 9.00}
 ]
 
 @user_cart = []
+
 
   greeting
 
